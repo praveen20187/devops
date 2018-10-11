@@ -17,6 +17,11 @@
       apt: "name=docker-ce update_cache=yes"
       name: "ensure docker and dependencies are installed"
     - 
+      dest: /usr/local/bin/docker-compose
+      mode: 493
+      name: "shell downlaod composer"
+      shell: "curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname-s)-$(uname -m)"
+    - 
       user: 
         append: true
         groups: docker
@@ -32,44 +37,3 @@
         state: latest
     - 
       become: true
-      get_url: 
-        dest: /etc/yum.repos.d/docer-ce.repo
-        url: "https://download.docker.com/linux/centos/docker-ce.repo"
-      name: "Add Docker repo"
-      when: "ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'"
-    - 
-      become: true
-      ini_file: 
-        dest: /etc/yum.repos.d/docer-ce.repo
-        option: enabled
-        section: docker-ce-edge
-        value: 0
-      name: "Enable Docker Edge repo"
-    - 
-      become: true
-      ini_file: 
-        dest: /etc/yum.repos.d/docer-ce.repo
-        option: enabled
-        section: docker-ce-test
-        value: 0
-      name: "Enable Docker Test repo"
-    - 
-      become: true
-      name: "Install Docker"
-      package: 
-        name: docker-ce
-        state: present
-    - 
-      become: true
-      name: "Start Docker service"
-      service: 
-        enabled: true
-        name: docker
-        state: started
-    - 
-      become: true
-      name: "Add user vagrant to docker group"
-      user: 
-        append: true
-        groups: docker
-        name: jenkins
