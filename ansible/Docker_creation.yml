@@ -1,0 +1,29 @@
+---
+-
+  become: true
+  hosts: all
+  tasks:
+    -
+      apt_key:
+        state: present
+        url: "https://download.docker.com/linux/ubuntu/gpg"
+      name: "ensure repository key is installed"
+      when: "ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'"
+    -
+      apt_repository: "repo='deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable' state=present"
+      name: "ensure docker registry is available"
+      when: "ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'"
+    -
+      apt: "name=git update_cache=yes state=present"
+      apt: "name=docker-ce update_cache=yes"
+      name: "ensure docker and dependencies are installed"
+      when: "ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'"
+    -
+      user:
+        append: true
+        groups: docker
+        name: jenkins
+      when: "ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'"
+    -
+      service: "name=docker state=restarted"
+      when: "ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'"
