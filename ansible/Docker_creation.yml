@@ -1,29 +1,75 @@
----
--
+--- 
+- 
   become: true
   hosts: all
-  tasks:
-    -
-      apt_key:
+  tasks: 
+    - 
+      apt_key: 
         state: present
         url: "https://download.docker.com/linux/ubuntu/gpg"
       name: "ensure repository key is installed"
       when: "ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'"
-    -
+    - 
       apt_repository: "repo='deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable' state=present"
       name: "ensure docker registry is available"
       when: "ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'"
-    -
-      apt: "name=git update_cache=yes state=present"
+    - 
       apt: "name=docker-ce update_cache=yes"
       name: "ensure docker and dependencies are installed"
-      when: "ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'"
-    -
-      user:
+    - 
+      user: 
         append: true
         groups: docker
         name: jenkins
       when: "ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'"
-    -
+    - 
       service: "name=docker state=restarted"
       when: "ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'"
+    - 
+      name: "Install yum utils"
+      yum: 
+        name: yum-utils
+        state: latest
+    - 
+      become: true
+      get_url: 
+        dest: /etc/yum.repos.d/docer-ce.repo
+        url: "https://download.docker.com/linux/centos/docker-ce.repo"
+      name: "Add Docker repo"
+      when: "ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'"
+    - 
+      become: true
+      ini_file: 
+        dest: /etc/yum.repos.d/docer-ce.repo
+        option: enabled
+        section: docker-ce-edge
+        value: 0
+      name: "Enable Docker Edge repo"
+    - 
+      become: true
+      ini_file: 
+        dest: /etc/yum.repos.d/docer-ce.repo
+        option: enabled
+        section: docker-ce-test
+        value: 0
+      name: "Enable Docker Test repo"
+    - 
+      become: true
+      name: "Install Docker"
+      package: 
+        name: docker-ce
+        state: present
+    - 
+      become: true
+      name: "Start Docker service"
+      service: 
+        enabled: true
+        name: docker
+        state: started
+    - 
+      become: true
+      name: "Add user vagrant to docker group"
+      user: 
+        append: true
+        groups: docker
+        name: jenkins
