@@ -1,0 +1,48 @@
+--- 
+- 
+  become: true
+  hosts: all
+  tasks: 
+    - 
+      apt_key: 
+        id: 0EBFCD88
+        url: "https://download.docker.com/linux/ubuntu/gpg"
+    - 
+      apt_repository: "repo='deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable' state=present"
+      name: "ensure docker registry is available"
+    - 
+      apt: 
+        update_cache: true
+        upgrade: true
+      name: update
+    - 
+      apt: "name=docker-ce update_cache=yes"
+      name: "ensure docker and dependencies are installed"
+    - 
+      name: "Check  version."
+      register: unames1
+      shell: "uname -s"
+    - 
+      name: "Check  version."
+      register: unames2
+      shell: "uname -m"
+    - 
+      get_url: 
+        dest: /bin/docker-compse
+        mode: 493
+        url: "https://github.com/docker/compose/releases/download/1.8.0/docker-compose-{{ unames1.stdout }}-{{ unames2.stdout }}"
+      name: "Install Docker Compose (if configured)."
+    - 
+      apt: 
+        update_cache: true
+      name: "Run the equivalent of \"apt-get update\" as a separate step"
+    - 
+      name: "Restart service httpd, in all cases"
+      service: 
+        name: docker
+        state: restarted
+    - 
+      user: 
+        append: true
+        groups: docker
+        name: jenkins
