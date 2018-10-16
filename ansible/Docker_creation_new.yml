@@ -37,7 +37,7 @@
         update_cache: true
       name: "Run the equivalent of \"apt-get update\" as a separate step"
     - 
-      name: "Restart service httpd, in all cases"
+      name: "Restart service docker"
       service: 
         name: docker
         state: restarted
