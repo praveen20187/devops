@@ -46,3 +46,19 @@
         append: true
         groups: docker
         name: jenkins
+        
+    - 
+      name: "create /home/jenkins directory"
+      file:
+        dest=/home/jenkins
+        state=directory
+        owner=jenkins
+        group=docker
+        mode=0755
+    
+    -
+      name: Get updated files from git repository 
+      git: 
+        repo: "https://scm.liquidhub.com/pchilakala/lh-jenkins.git"
+        dest: /home/jenkins/lh-jenkins
+ 
