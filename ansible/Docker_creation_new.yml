@@ -1,3 +1,4 @@
+
 --- 
 - 
   become: true
@@ -19,11 +20,11 @@
       apt: "name=docker-ce update_cache=yes"
       name: "ensure docker and dependencies are installed"
     - 
-      name: "Check  version."
+      name: "Check ubuntu distro version."
       register: unames1
       shell: "uname -s"
     - 
-      name: "Check  version."
+      name: "Check ubuntu distro2 version."
       register: unames2
       shell: "uname -m"
     - 
@@ -59,6 +60,6 @@
     -
       name: Get updated files from git repository 
       git: 
-        repo: "https://scm.xxxxxxxx.com/pcxxxxx/lh-jenkins.git"
-        dest: /home/jenkins/lh-jenkins
+        repo: "https://oauth2:{personalauthtokens}@scm.xxxxxx.com/{username}/xxx-jenkins.git"
+        dest: /home/jenkins/xx-jenkins
  
