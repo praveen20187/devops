@@ -59,6 +59,6 @@
     -
       name: Get updated files from git repository 
       git: 
-        repo: "https://scm.liquidhub.com/pchilakala/lh-jenkins.git"
+        repo: "https://scm.xxxxxxxx.com/pcxxxxx/lh-jenkins.git"
         dest: /home/jenkins/lh-jenkins
  
